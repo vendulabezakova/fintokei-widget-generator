@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fintokei Widget Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrapper">
+  <header>
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <h1>Widget Generator</h1>
+    </div>
+    <p class="subtitle">Fintokei · WordPress Gutenberg</p>
+  </header>
+
+  <div class="card">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('tip')">💡 Fintokei Tip</button>
+      <button class="tab" onclick="switchTab('cta')">CTA Box</button>
+    </div>
+
+    <!-- TIP PANEL -->
+    <div id="panel-tip" class="panel active">
+      <div class="field">
+        <label>Nadpis widgetu</label>
+        <input type="text" id="tip-title" placeholder="💡 Fintokei tip" value="💡 Fintokei tip" />
+      </div>
+      <div class="field">
+        <label>Text před odkazem</label>
+        <textarea id="tip-before" placeholder="Přečti si,"></textarea>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Anchor text</label>
+          <input type="text" id="tip-anchor" placeholder="jak nastavit risk-reward ratio" />
+        </div>
+        <div class="field">
+          <label>URL odkazu</label>
+          <input type="text" id="tip-url" placeholder="https://www.fintokei.com/..." />
+        </div>
+      </div>
+      <div class="field">
+        <label>Text za odkazem <span class="optional">(volitelné)</span></label>
+        <textarea id="tip-after"></textarea>
+      </div>
+      <div class="actions">
+        <button class="btn-generate" onclick="generateTip()">Vygenerovat HTML</button>
+        <button class="btn-reset" onclick="resetTip()">Vymazat</button>
+      </div>
+      <div class="output-box" id="tip-output">
+        <div class="output-header">
+          <span class="output-label">HTML kód</span>
+          <button class="btn-copy" onclick="copyCode('tip-code', this)">
+            <svg id="tip-icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            <svg id="tip-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="tip-copy-label">Kopírovat</span>
+          </button>
+        </div>
+        <div class="code-block" id="tip-code"></div>
+      </div>
+    </div>
+
+    <!-- CTA PANEL -->
+    <div id="panel-cta" class="panel">
+      <div class="field">
+        <label>Nadpis</label>
+        <input type="text" id="cta-title" placeholder="Jsi ready vyzkoušet nejlepší one-phase prop challenge?" />
+      </div>
+      <div class="field">
+        <label>Popisek <span class="optional">(volitelné)</span></label>
+        <textarea id="cta-desc" placeholder="Začni svou challenge ještě dnes..."></textarea>
+      </div>
+      <div class="divider"></div>
+      <div class="section-label">Tlačítka</div>
+      <div class="field">
+        <label>Počet tlačítek</label>
+        <div class="btn-toggle">
+          <button class="btn-count active" onclick="setBtnCount(1, this)">1 tlačítko</button>
+          <button class="btn-count" onclick="setBtnCount(2, this)">2 tlačítka</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Text · primary</label>
+          <input type="text" id="cta-btn1-text" placeholder="Začni hned" />
+        </div>
+        <div class="field">
+          <label>URL · primary</label>
+          <input type="text" id="cta-btn1-url" placeholder="https://my.fintokei.com/..." />
+        </div>
+      </div>
+      <div class="second-btn" id="second-btn-fields">
+        <div class="row">
+          <div class="field">
+            <label>Text · secondary</label>
+            <input type="text" id="cta-btn2-text" placeholder="Free Trial" />
+          </div>
+          <div class="field">
+            <label>URL · secondary</label>
+            <input type="text" id="cta-btn2-url" placeholder="https://my.fintokei.com/..." />
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-generate" onclick="generateCTA()">Vygenerovat HTML</button>
+        <button class="btn-reset" onclick="resetCTA()">Vymazat</button>
+      </div>
+      <div class="output-box" id="cta-output">
+        <div class="output-header">
+          <span class="output-label">HTML kód</span>
+          <button class="btn-copy" onclick="copyCode('cta-code', this)">
+            <svg id="cta-icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            <svg id="cta-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="cta-copy-label">Kopírovat</span>
+          </button>
+        </div>
+        <div class="code-block" id="cta-code"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
