@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fintokei Widget Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0018;
+    --bg-card: #160025;
+    --bg-input: #1e0033;
+    --bg-hover: #2a0047;
+    --accent: #7e00e7;
+    --accent2: #fa1abb;
+    --accent-light: #b060ff;
+    --border: rgba(126,0,231,0.25);
+    --border-hover: rgba(126,0,231,0.5);
+    --text: #f0e6ff;
+    --text-muted: #9b7fc2;
+    --text-dim: #5e4080;
+    --success: #6ceefa;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 40px 20px 80px;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 500px;
+    background: radial-gradient(ellipse, rgba(126,0,231,0.18) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    max-width: 680px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  header {
+    margin-bottom: 40px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  .logo-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent2);
+    box-shadow: 0 0 12px var(--accent2);
+    animation: pulse 2s ease infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-left: 18px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    animation: fadeUp 0.5s ease 0.1s both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    padding: 4px;
+    margin-bottom: 28px;
+    border: 1px solid var(--border);
+  }
+
+  .tab {
+    flex: 1;
+    padding: 9px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+
+  .tab.active {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 20px rgba(126,0,231,0.4);
+  }
+
+  .tab:not(.active):hover {
+    color: var(--text);
+    background: var(--bg-hover);
+  }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .field {
+    margin-bottom: 16px;
+  }
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 7px;
+  }
+
+  label .optional {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--text-dim);
+    font-size: 11px;
+  }
+
+  input[type="text"], textarea {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  input[type="text"]::placeholder, textarea::placeholder {
+    color: var(--text-dim);
+  }
+
+  input[type="text"]:focus, textarea:focus {
+    border-color: var(--accent-light);
+    box-shadow: 0 0 0 3px rgba(126,0,231,0.15);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 72px;
+    line-height: 1.5;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 20px 0;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+  }
+
+  .btn-toggle {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-count {
+    padding: 8px 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+
+  .btn-count.active {
+    background: rgba(126,0,231,0.2);
+    border-color: var(--accent-light);
+    color: var(--accent-light);
+  }
+
+  .second-btn { display: none; margin-top: 12px; }
+  .second-btn.visible { display: block; }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .btn-generate {
+    flex: 1;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, var(--accent) 0%, #5000aa 100%);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    box-shadow: 0 4px 20px rgba(126,0,231,0.35);
+  }
+
+  .btn-generate:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-generate:active { transform: scale(0.98); }
+
+  .btn-reset {
+    padding: 12px 18px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-reset:hover { background: var(--bg-hover); color: var(--text); border-color: var(--border-hover); }
+
+  .output-box {
+    display: none;
+    margin-top: 24px;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    animation: fadeUp 0.3s ease both;
+  }
+
+  .output-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .output-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .btn-copy {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-copy:hover { background: var(--bg-hover); color: var(--text); border-color: var(--border-hover); }
+  .btn-copy.copied { color: var(--success); border-color: var(--success); }
+
+  .btn-copy svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+  .code-block {
+    background: #0a0012;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: #c9a6ff;
+    white-space: pre-wrap;
+    word-break: break-all;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 520px) {
+    .row { grid-template-columns: 1fr; }
+    body { padding: 24px 16px 60px; }
+    .card { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <header>
+    <div class="logo">
+      <div class="logo-dot"></div>
+      <h1>Widget Generator</h1>
+    </div>
+    <p class="subtitle">Fintokei · WordPress Gutenberg</p>
+  </header>
+
+  <div class="card">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('tip')">💡 Fintokei Tip</button>
+      <button class="tab" onclick="switchTab('cta')">CTA Box</button>
+    </div>
+
+    <!-- TIP PANEL -->
+    <div id="panel-tip" class="panel active">
+      <div class="field">
+        <label>Nadpis widgetu</label>
+        <input type="text" id="tip-title" placeholder="💡 Fintokei tip" value="💡 Fintokei tip" />
+      </div>
+      <div class="field">
+        <label>Text před odkazem</label>
+        <textarea id="tip-before" placeholder="Přečti si,"></textarea>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Anchor text</label>
+          <input type="text" id="tip-anchor" placeholder="jak nastavit risk-reward ratio" />
+        </div>
+        <div class="field">
+          <label>URL odkazu</label>
+          <input type="text" id="tip-url" placeholder="https://www.fintokei.com/..." />
+        </div>
+      </div>
+      <div class="field">
+        <label>Text za odkazem <span class="optional">(volitelné)</span></label>
+        <textarea id="tip-after" placeholder=""></textarea>
+      </div>
+      <div class="actions">
+        <button class="btn-generate" onclick="generateTip()">Vygenerovat HTML</button>
+        <button class="btn-reset" onclick="resetTip()">Vymazat</button>
+      </div>
+      <div class="output-box" id="tip-output">
+        <div class="output-header">
+          <span class="output-label">HTML kód</span>
+          <button class="btn-copy" onclick="copyCode('tip-code', this)">
+            <svg id="tip-icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            <svg id="tip-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="tip-copy-label">Kopírovat</span>
+          </button>
+        </div>
+        <div class="code-block" id="tip-code"></div>
+      </div>
+    </div>
+
+    <!-- CTA PANEL -->
+    <div id="panel-cta" class="panel">
+      <div class="field">
+        <label>Nadpis</label>
+        <input type="text" id="cta-title" placeholder="Jsi ready vyzkoušet nejlepší one-phase prop challenge?" />
+      </div>
+      <div class="field">
+        <label>Popisek <span class="optional">(volitelné)</span></label>
+        <textarea id="cta-desc" placeholder="Začni svou challenge ještě dnes..."></textarea>
+      </div>
+      <div class="divider"></div>
+      <div class="section-label">Tlačítka</div>
+      <div class="field">
+        <label>Počet tlačítek</label>
+        <div class="btn-toggle">
+          <button class="btn-count active" onclick="setBtnCount(1, this)">1 tlačítko</button>
+          <button class="btn-count" onclick="setBtnCount(2, this)">2 tlačítka</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Text · primary</label>
+          <input type="text" id="cta-btn1-text" placeholder="Začni hned" />
+        </div>
+        <div class="field">
+          <label>URL · primary</label>
+          <input type="text" id="cta-btn1-url" placeholder="https://my.fintokei.com/..." />
+        </div>
+      </div>
+      <div class="second-btn" id="second-btn-fields">
+        <div class="row">
+          <div class="field">
+            <label>Text · secondary</label>
+            <input type="text" id="cta-btn2-text" placeholder="Free Trial" />
+          </div>
+          <div class="field">
+            <label>URL · secondary</label>
+            <input type="text" id="cta-btn2-url" placeholder="https://my.fintokei.com/..." />
+          </div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-generate" onclick="generateCTA()">Vygenerovat HTML</button>
+        <button class="btn-reset" onclick="resetCTA()">Vymazat</button>
+      </div>
+      <div class="output-box" id="cta-output">
+        <div class="output-header">
+          <span class="output-label">HTML kód</span>
+          <button class="btn-copy" onclick="copyCode('cta-code', this)">
+            <svg id="cta-icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            <svg id="cta-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="cta-copy-label">Kopírovat</span>
+          </button>
+        </div>
+        <div class="code-block" id="cta-code"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let btnCount = 1;
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', ['tip','cta'][i] === name));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+}
+
+function setBtnCount(n, el) {
+  btnCount = n;
+  document.querySelectorAll('.btn-count').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('second-btn-fields').classList.toggle('visible', n === 2);
+}
+
+function generateTip() {
+  const title = document.getElementById('tip-title').value.trim() || '💡 Fintokei tip';
+  const before = document.getElementById('tip-before').value.trim();
+  const anchor = document.getElementById('tip-anchor').value.trim();
+  const url = document.getElementById('tip-url').value.trim();
+  const after = document.getElementById('tip-after').value.trim();
+
+  let p = '';
+  if (before) p += before + ' ';
+  if (anchor && url) p += `<a href="${url}" style="color: #FA1ABB">${anchor}</a>`;
+  if (after) p += ' ' + after;
+
+  const html = `<div class="wp-block-custom-gutenberg-blocks-blog-text-block blog-text-block">\n<h3 class="blog-text-block__title">${title}</h3> \n<p>${p.trim()}</p>\n</div>`;
+
+  document.getElementById('tip-code').textContent = html;
+  document.getElementById('tip-output').style.display = 'block';
+}
+
+function generateCTA() {
+  const title = document.getElementById('cta-title').value.trim();
+  const desc = document.getElementById('cta-desc').value.trim();
+  const btn1text = document.getElementById('cta-btn1-text').value.trim();
+  const btn1url = document.getElementById('cta-btn1-url').value.trim();
+  const btn2text = document.getElementById('cta-btn2-text').value.trim();
+  const btn2url = document.getElementById('cta-btn2-url').value.trim();
+
+  const flexDir = btnCount === 2 ? 'row' : 'column';
+  const descHtml = desc ? `\n  <p style="color: #d0b8f0; margin: 0 0 20px 0;">${desc}</p>` : '';
+
+  let btns = `\n    <a href="${btn1url}" class="btn-v3 btn-v3--xxl-light" style="margin-top: 20px;"><span class="btn--text" style="color:#210045;">${btn1text}</span></a>`;
+  if (btnCount === 2) {
+    btns += `\n    <a href="${btn2url}" class="btn-v3 btn-v3--xxl-dark" style="margin-top: 20px;"><span class="btn-border"></span><span class="btn--text" style="color:#6ceefa;">${btn2text}</span></a>`;
+  }
+
+  const html = `<section style="text-align: center; margin-top: 50px; background: linear-gradient(0deg, rgba(126,0,231,1) 28%, rgba(80,0,170,1) 68%); padding: 50px 40px; border-radius: 40px;">\n<div>\n  <h2 style="color: #fff; margin-bottom: 20px">${title}</h2>${descHtml}\n  <div style="display: flex; flex-direction: ${flexDir}; justify-content: space-around; flex-wrap: wrap;">${btns}\n  </div>\n</div>\n</section>`;
+
+  document.getElementById('cta-code').textContent = html;
+  document.getElementById('cta-output').style.display = 'block';
+}
+
+function resetTip() {
+  document.getElementById('tip-title').value = '💡 Fintokei tip';
+  ['tip-before','tip-anchor','tip-url','tip-after'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('tip-output').style.display = 'none';
+}
+
+function resetCTA() {
+  ['cta-title','cta-desc','cta-btn1-text','cta-btn1-url','cta-btn2-text','cta-btn2-url'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('cta-output').style.display = 'none';
+}
+
+function copyCode(id, btn) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const prefix = id === 'tip-code' ? 'tip' : 'cta';
+    btn.classList.add('copied');
+    document.getElementById(prefix + '-icon-copy').style.display = 'none';
+    document.getElementById(prefix + '-icon-check').style.display = 'block';
+    document.getElementById(prefix + '-copy-label').textContent = 'Zkopírováno';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      document.getElementById(prefix + '-icon-copy').style.display = 'block';
+      document.getElementById(prefix + '-icon-check').style.display = 'none';
+      document.getElementById(prefix + '-copy-label').textContent = 'Kopírovat';
+    }, 2000);
+  });
+}
+</script>
+</body>
+</html>
